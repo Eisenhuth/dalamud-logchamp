@@ -1,0 +1,55 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace logchamp;
+
+public static class Extensions
+{
+    public static string FormatFileSize(this long bytes)
+    {
+        const int scale = 1024;
+        string[] units = {"B", "KB", "MB", "GB"};
+
+        var value = (double) bytes;
+        var magnitude = 0;
+
+        while (value >= scale && magnitude < units.Length - 1)
+        {
+            value /= scale;
+            magnitude++;
+        }
+
+        return $"{value:0.##} {units[magnitude]}";
+    }
+    
+    public static IEnumerable<FileInfo> GetFilesOlderThan(this DirectoryInfo directory, int days)
+    {
+        var cutoff = DateTime.Now.AddDays(-days);
+
+        return directory.GetFiles().Where(file => file.LastWriteTime < cutoff);
+    }
+    
+    public static IEnumerable<FileInfo> GetFilesOlderThan(this DirectoryInfo directory, Configuration.Timeframe timeframe)
+    {
+        var days = timeframe switch
+        {
+            Configuration.Timeframe.Seven => 7,
+            Configuration.Timeframe.Fourteen => 14,
+            Configuration.Timeframe.Thirty => 30,
+            Configuration.Timeframe.Sixty => 60,
+            Configuration.Timeframe.Ninety => 90,
+            _ => throw new ArgumentOutOfRangeException(nameof(timeframe), timeframe, null)
+        };
+
+        var cutoff = DateTime.Now.AddDays(-days);
+
+        return directory.GetFiles().Where(file => file.LastWriteTime < cutoff);
+    }
+
+    public static long GetTotalSize(this DirectoryInfo directory, string searchPattern)
+    {
+        return directory.EnumerateFiles(searchPattern, SearchOption.AllDirectories).Sum(file => file.Length);
+    }
+}
