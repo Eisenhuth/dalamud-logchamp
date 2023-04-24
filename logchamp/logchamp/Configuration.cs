@@ -13,7 +13,8 @@ public class Configuration : IPluginConfiguration
     {
         Seven,
         Fourteen,
-        Thirty, Sixty,
+        Thirty,
+        Sixty,
         Ninety
     }
     
