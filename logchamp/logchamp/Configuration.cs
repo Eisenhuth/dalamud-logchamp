@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using Dalamud.Configuration;
 using Dalamud.Plugin;
 
@@ -12,11 +11,10 @@ public class Configuration : IPluginConfiguration
     
     public enum Timeframe
     {
-     [Description("1 week")] Seven,
-     [Description("2 weeks")] Fourteen,
-     [Description("1 month")] Thirty,
-     [Description("2 months")] Sixty,
-     [Description("3 months")] Ninety
+        Seven,
+        Fourteen,
+        Thirty, Sixty,
+        Ninety
     }
     
     public Timeframe DeleteAfterTimeframe = Timeframe.Thirty;

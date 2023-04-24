@@ -52,4 +52,17 @@ public static class Extensions
     {
         return directory.EnumerateFiles(searchPattern, SearchOption.AllDirectories).Sum(file => file.Length);
     }
+
+    public static string ToName(this Enum timeframe)
+    {
+        return timeframe switch
+        {
+            Configuration.Timeframe.Seven => "1 week",
+            Configuration.Timeframe.Fourteen => "2 weeks",
+            Configuration.Timeframe.Thirty => "1 month",
+            Configuration.Timeframe.Sixty => "2 months",
+            Configuration.Timeframe.Ninety => "3 months",
+            _ => string.Empty,
+        };
+    }
 }

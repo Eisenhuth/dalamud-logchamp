@@ -74,7 +74,7 @@ public class LogchampPlugin : IDalamudPlugin
             directoryInfo = new DirectoryInfo(configuration.LogsDirectory);
             var newSize = await Task.Run(() => directoryInfo.GetTotalSize("*.log"));
             
-            chatGui.Print($"{Name}: deleted {filesToDelete.Count} log(s) with a total size of {(initialSize-newSize).FormatFileSize()}");
+            chatGui.Print($"{Name}: deleted {filesToDelete.Count} log(s) older than {timeframe.ToName()} with a total size of {(initialSize-newSize).FormatFileSize()}");
         }
 
         #region configuration
@@ -89,8 +89,8 @@ public class LogchampPlugin : IDalamudPlugin
             ImGui.Text("Delete logs after");
             ImGui.SameLine();
 
-            var timeframeRef = (int) configTimeframe;
-            if (ImGui.Combo("", ref timeframeRef, "7 days\014 days\01 month\02 months\03 months"))
+            Enum timeframeRef = configTimeframe;
+            if (DrawEnumCombo(ref timeframeRef))
             {
                 configTimeframe = (Configuration.Timeframe) timeframeRef;
                 SaveConfiguration();
@@ -105,8 +105,28 @@ public class LogchampPlugin : IDalamudPlugin
             ImGui.TextDisabled($"Logs older than 30 days: {thirty.Count} files - {thirty.Sum(file => file.Length).FormatFileSize()}");
             ImGui.TextDisabled($"Logs older than 90 days: {ninety.Count} files - {ninety.Sum(file => file.Length).FormatFileSize()}");
             
-            
             ImGui.End();
+        }
+        
+        private static bool DrawEnumCombo(ref Enum value)
+        {
+            var valueChanged = false;
+        
+            if (ImGui.BeginCombo($"##EnumCombo{value.GetType()}", value.ToName()))
+            {
+                foreach (Enum enumValue in Enum.GetValues(value.GetType()))
+                {
+                    if (ImGui.Selectable(enumValue.ToName(), enumValue.Equals(value)))
+                    {
+                        value = enumValue;
+                        valueChanged = true;
+                    }
+                }
+            
+                ImGui.EndCombo();
+            }
+
+            return valueChanged;
         }
         
         private static void OpenConfig()
@@ -135,6 +155,4 @@ public class LogchampPlugin : IDalamudPlugin
 
             CommandManager.RemoveHandler(commandName);
         }
-        
-        
     }
