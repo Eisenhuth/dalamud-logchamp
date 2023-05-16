@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
+using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using ImGuiNET;
@@ -21,6 +23,8 @@ public class LogchampPlugin : IDalamudPlugin
         private Configuration.Timeframe configTimeframe;
         [PluginService] private static DalamudPluginInterface PluginInterface { get; set; } = null!;
         [PluginService] private static CommandManager CommandManager { get; set; } = null!;
+
+        private bool cleanedOnStartup;
         
         
         public LogchampPlugin([RequiredVersion("1.0")] DalamudPluginInterface dalamudPluginInterface, [RequiredVersion("1.0")] ChatGui chatGui, [RequiredVersion("1.0")] CommandManager commandManager)
@@ -35,14 +39,23 @@ public class LogchampPlugin : IDalamudPlugin
             dalamudPluginInterface.UiBuilder.Draw += DrawConfiguration;
             dalamudPluginInterface.UiBuilder.OpenConfigUi += OpenConfig;
             
+            chatGui.ChatMessage += OnChatMessage;
+            
             commandManager.AddHandler(commandName, new CommandInfo(CleanupCommand)
             {
                 HelpMessage = "opens the configuration",
                 ShowInHelp = true
             });
-
-            Task.Run(() => DeleteLogs(configTimeframe));
         }
+        private void OnChatMessage(XivChatType type, uint senderid, ref SeString sender, ref SeString message, ref bool ishandled)
+        {
+            if (type == XivChatType.Notice && !cleanedOnStartup)
+            {
+                Task.Run(() => DeleteLogs(configTimeframe));
+                cleanedOnStartup = true;
+            }
+        }
+
         private void CleanupCommand(string command, string args)
         {
             OpenConfig();
@@ -85,7 +98,6 @@ public class LogchampPlugin : IDalamudPlugin
                 return;
             
             ImGui.Begin($"{Name} Configuration", ref drawConfiguration);
-            
             ImGui.Text("Delete logs after");
             ImGui.SameLine();
 
@@ -152,6 +164,7 @@ public class LogchampPlugin : IDalamudPlugin
         {
             PluginInterface.UiBuilder.Draw -= DrawConfiguration;
             PluginInterface.UiBuilder.OpenConfigUi -= OpenConfig;
+            chatGui.ChatMessage -= OnChatMessage;
 
             CommandManager.RemoveHandler(commandName);
         }
