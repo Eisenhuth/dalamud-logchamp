@@ -50,7 +50,7 @@ public static class Extensions
 
     public static long GetTotalSize(this DirectoryInfo directory, string searchPattern)
     {
-        return directory.EnumerateFiles(searchPattern, SearchOption.AllDirectories).Sum(file => file.Length);
+        return directory.Exists ? directory.EnumerateFiles(searchPattern, SearchOption.AllDirectories).Sum(file => file.Length) : 0;
     }
 
     public static string ToName(this Enum timeframe)

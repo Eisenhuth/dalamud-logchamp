@@ -3,6 +3,7 @@
   "Name": "LogChamp",
   "Description": "automatically deletes your ACT logs after a configurable amount of time",
   "Punchline": "keep your ACT's FFXIVLogs folder in check",
+  "Changelog": "- added cleanup for log files created by deucalion",
   "InternalName": "LogchampPlugin",
   "Tags": ["log", "act"],
   "RepoUrl": "https://github.com/Eisenhuth/dalamud-logchamp",

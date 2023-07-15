@@ -63,10 +63,11 @@ public class LogchampPlugin : IDalamudPlugin
 
         private async Task DeleteLogs(Configuration.Timeframe timeframe)
         {
-            var directoryInfo = new DirectoryInfo(configuration.LogsDirectory);
-            var initialSize = await Task.Run(() => directoryInfo.GetTotalSize("*.log"));
-
-            var filesToDelete = directoryInfo.GetFilesOlderThan(timeframe).ToList();
+            var logsDirectoryInfo = new DirectoryInfo(configuration.LogsDirectory);
+            var deucalionDirectoryInfo = new DirectoryInfo(configuration.DeucalionDirectory);
+            var initialSize = await Task.Run(() => logsDirectoryInfo.GetTotalSize("*.log") + deucalionDirectoryInfo.GetTotalSize("*.log"));
+            var filesToDelete = logsDirectoryInfo.GetFilesOlderThan(timeframe).ToList();
+            filesToDelete.AddRange(deucalionDirectoryInfo.GetFilesOlderThan(timeframe).ToList());
 
             if (filesToDelete.Count == 0)
                 return;
@@ -84,8 +85,9 @@ public class LogchampPlugin : IDalamudPlugin
                 }
             }
 
-            directoryInfo = new DirectoryInfo(configuration.LogsDirectory);
-            var newSize = await Task.Run(() => directoryInfo.GetTotalSize("*.log"));
+            logsDirectoryInfo = new DirectoryInfo(configuration.LogsDirectory);
+            deucalionDirectoryInfo = new DirectoryInfo(configuration.DeucalionDirectory);
+            var newSize = await Task.Run(() => logsDirectoryInfo.GetTotalSize("*.log") + deucalionDirectoryInfo.GetTotalSize("*.log"));
             
             chatGui.Print($"{Name}: deleted {filesToDelete.Count} log(s) older than {timeframe.ToName()} with a total size of {(initialSize-newSize).FormatFileSize()}");
         }

@@ -8,6 +8,7 @@ public class Configuration : IPluginConfiguration
 {
     public int Version { get; set; }
     public string LogsDirectory { get; set; } = Environment.ExpandEnvironmentVariables("%AppData%\\Advanced Combat Tracker\\FFXIVLogs");
+    public string DeucalionDirectory { get; set; } = Environment.ExpandEnvironmentVariables("%AppData%\\deucalion");
     
     public enum Timeframe
     {
