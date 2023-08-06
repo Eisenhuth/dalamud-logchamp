@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
@@ -21,6 +22,7 @@ public class LogchampPlugin : IDalamudPlugin
         private Configuration configuration;
         private ChatGui chatGui;
         private Configuration.Timeframe configTimeframe;
+        private string configLogsDirectory;
         [PluginService] private static DalamudPluginInterface PluginInterface { get; set; } = null!;
         [PluginService] private static CommandManager CommandManager { get; set; } = null!;
 
@@ -64,11 +66,18 @@ public class LogchampPlugin : IDalamudPlugin
         private async Task DeleteLogs(Configuration.Timeframe timeframe)
         {
             var logsDirectoryInfo = new DirectoryInfo(configuration.LogsDirectory);
+            
+            if(!logsDirectoryInfo.Exists)
+            {
+                chatGui.Print($"{Name}: couldn't find directory, please check the configuration -> /logs");
+                return;
+            }
+            
             var deucalionDirectoryInfo = new DirectoryInfo(configuration.DeucalionDirectory);
             var initialSize = await Task.Run(() => logsDirectoryInfo.GetTotalSize("*.log") + deucalionDirectoryInfo.GetTotalSize("*.log"));
             var filesToDelete = logsDirectoryInfo.GetFilesOlderThan(timeframe).ToList();
             filesToDelete.AddRange(deucalionDirectoryInfo.GetFilesOlderThan(timeframe).ToList());
-
+            
             if (filesToDelete.Count == 0)
                 return;
 
@@ -100,6 +109,10 @@ public class LogchampPlugin : IDalamudPlugin
                 return;
             
             ImGui.Begin($"{Name} Configuration", ref drawConfiguration);
+
+            if (ImGui.InputText("Logs Directory", ref configLogsDirectory, 256))
+                SaveConfiguration();
+            
             ImGui.Text("Delete logs after");
             ImGui.SameLine();
 
@@ -111,14 +124,19 @@ public class LogchampPlugin : IDalamudPlugin
             }
             
             var directoryInfo = new DirectoryInfo(configuration.LogsDirectory);
-            var seven = directoryInfo.GetFilesOlderThan(7).ToList();
-            var thirty = directoryInfo.GetFilesOlderThan(30).ToList();
-            var ninety = directoryInfo.GetFilesOlderThan(90).ToList();
+            if (directoryInfo.Exists)
+            {
+                var seven = directoryInfo.GetFilesOlderThan(7).ToList();
+                var thirty = directoryInfo.GetFilesOlderThan(30).ToList();
+                var ninety = directoryInfo.GetFilesOlderThan(90).ToList();
             
-            ImGui.TextDisabled($"Logs older than 7 days: {seven.Count} files - {seven.Sum(file => file.Length).FormatFileSize()}");
-            ImGui.TextDisabled($"Logs older than 30 days: {thirty.Count} files - {thirty.Sum(file => file.Length).FormatFileSize()}");
-            ImGui.TextDisabled($"Logs older than 90 days: {ninety.Count} files - {ninety.Sum(file => file.Length).FormatFileSize()}");
-            
+                ImGui.TextDisabled($"Logs older than 7 days: {seven.Count} files - {seven.Sum(file => file.Length).FormatFileSize()}");
+                ImGui.TextDisabled($"Logs older than 30 days: {thirty.Count} files - {thirty.Sum(file => file.Length).FormatFileSize()}");
+                ImGui.TextDisabled($"Logs older than 90 days: {ninety.Count} files - {ninety.Sum(file => file.Length).FormatFileSize()}");
+            }
+            else
+                ImGui.TextColored(new Vector4(1, 0, 0, 1), "Logs directory doesn't exist");
+
             ImGui.End();
         }
         
@@ -151,11 +169,13 @@ public class LogchampPlugin : IDalamudPlugin
         private void LoadConfiguration()
         {
             configTimeframe = configuration.DeleteAfterTimeframe;
+            configLogsDirectory = configuration.LogsDirectory;
         }
 
         private void SaveConfiguration()
         {
             configuration.DeleteAfterTimeframe = configTimeframe;
+            configuration.LogsDirectory = configLogsDirectory;
             Task.Run(() => DeleteLogs(configTimeframe));
 
             PluginInterface.SavePluginConfig(configuration);
