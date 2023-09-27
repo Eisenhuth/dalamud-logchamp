@@ -9,6 +9,7 @@ using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.IoC;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 using ImGuiNET;
 
 namespace logchamp;
@@ -20,16 +21,16 @@ public class LogchampPlugin : IDalamudPlugin
         private static bool drawConfiguration;
         
         private Configuration configuration;
-        private ChatGui chatGui;
+        private IChatGui chatGui;
         private Configuration.Timeframe configTimeframe;
         private string configLogsDirectory;
         [PluginService] private static DalamudPluginInterface PluginInterface { get; set; } = null!;
-        [PluginService] private static CommandManager CommandManager { get; set; } = null!;
+        [PluginService] private static ICommandManager CommandManager { get; set; } = null!;
 
         private bool cleanedOnStartup;
         
         
-        public LogchampPlugin([RequiredVersion("1.0")] DalamudPluginInterface dalamudPluginInterface, [RequiredVersion("1.0")] ChatGui chatGui, [RequiredVersion("1.0")] CommandManager commandManager)
+        public LogchampPlugin([RequiredVersion("1.0")] DalamudPluginInterface dalamudPluginInterface, [RequiredVersion("1.0")] IChatGui chatGui, [RequiredVersion("1.0")] ICommandManager commandManager)
         {
             this.chatGui = chatGui;
 

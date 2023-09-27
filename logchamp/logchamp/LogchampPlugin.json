@@ -3,7 +3,7 @@
   "Name": "LogChamp",
   "Description": "automatically deletes your ACT logs after a configurable amount of time",
   "Punchline": "keep your ACT's FFXIVLogs folder in check",
-  "Changelog": "- added option to change the logs directory",
+  "Changelog": "- updated to Dalamud API9",
   "InternalName": "LogchampPlugin",
   "Tags": ["log", "act"],
   "RepoUrl": "https://github.com/Eisenhuth/dalamud-logchamp",
