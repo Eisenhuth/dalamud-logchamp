@@ -28,7 +28,7 @@ public static class Extensions
     {
         var cutoff = DateTime.Now.AddDays(-days);
 
-        return directory.GetFiles().Where(file => file.LastWriteTime < cutoff);
+        return directory.GetFiles().Where(file => file.LastWriteTime < cutoff && file.Extension.Equals(".log"));
     }
     
     public static IEnumerable<FileInfo> GetFilesOlderThan(this DirectoryInfo directory, Configuration.Timeframe timeframe)
@@ -45,7 +45,7 @@ public static class Extensions
 
         var cutoff = DateTime.Now.AddDays(-days);
 
-        return directory.GetFiles().Where(file => file.LastWriteTime < cutoff);
+        return directory.GetFiles().Where(file => file.LastWriteTime < cutoff && file.Extension.Equals(".log"));
     }
 
     public static long GetTotalSize(this DirectoryInfo directory, string searchPattern)

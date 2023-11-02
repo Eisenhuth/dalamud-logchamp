@@ -4,7 +4,6 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
-using Dalamud.Game.Gui;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.IoC;
@@ -86,7 +85,7 @@ public class LogchampPlugin : IDalamudPlugin
             {
                 try
                 {
-                    if(file.Exists && !file.IsReadOnly)
+                    if(file.Exists && file.Extension.Equals(".log") && !file.IsReadOnly)
                         file.Delete();
                 }
                 catch (Exception exception)
