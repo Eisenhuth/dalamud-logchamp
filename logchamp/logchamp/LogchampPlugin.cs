@@ -98,7 +98,11 @@ public class LogchampPlugin : IDalamudPlugin
             deucalionDirectoryInfo = new DirectoryInfo(configuration.DeucalionDirectory);
             var newSize = await Task.Run(() => logsDirectoryInfo.GetTotalSize("*.log") + deucalionDirectoryInfo.GetTotalSize("*.log"));
             
-            chatGui.Print($"{Name}: deleted {filesToDelete.Count} log(s) older than {timeframe.ToName()} with a total size of {(initialSize-newSize).FormatFileSize()}");
+            var deletedSize = initialSize - newSize;
+            configuration.TotalDeleted += deletedSize;
+            PluginInterface.SavePluginConfig(configuration);            
+            
+            chatGui.Print($"{Name}: deleted {filesToDelete.Count} log{(filesToDelete.Count > 1 ? "s" : "")} older than {timeframe.ToName()} with a total size of {deletedSize.FormatFileSize()}");
         }
 
         #region configuration
@@ -136,7 +140,15 @@ public class LogchampPlugin : IDalamudPlugin
             }
             else
                 ImGui.TextColored(new Vector4(1, 0, 0, 1), "Logs directory doesn't exist");
-
+            
+            ImGui.TextDisabled($"Total space saved: {configuration.TotalDeleted.FormatFileSize()}");
+            ImGui.SameLine();
+            if (ImGui.SmallButton("Reset"))
+            {
+                configuration.TotalDeleted = 0;
+                PluginInterface.SavePluginConfig(configuration);            
+            }
+            
             ImGui.End();
         }
         
