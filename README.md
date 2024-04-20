@@ -10,3 +10,6 @@ automatically keeps your ACT's FFXIVLogs folder in check
 
 # installation
 get it here: https://github.com/Eisenhuth/TrustworthyDalamudPlugins
+```
+https://raw.githubusercontent.com/Eisenhuth/TrustworthyDalamudPlugins/master/pluginmaster.json
+```
