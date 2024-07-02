@@ -22,9 +22,9 @@ public class Configuration : IPluginConfiguration
     
     public Timeframe DeleteAfterTimeframe = Timeframe.Thirty;
 
-    private DalamudPluginInterface _pluginInterface;
+    private IDalamudPluginInterface _pluginInterface;
 
-    public void Initialize(DalamudPluginInterface pInterface)
+    public void Initialize(IDalamudPluginInterface pInterface)
     {
         _pluginInterface = pInterface;
     }
