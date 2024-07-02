@@ -23,13 +23,13 @@ public class LogchampPlugin : IDalamudPlugin
         private IChatGui chatGui;
         private Configuration.Timeframe configTimeframe;
         private string configLogsDirectory;
-        [PluginService] private static DalamudPluginInterface PluginInterface { get; set; } = null!;
+        [PluginService] private static IDalamudPluginInterface PluginInterface { get; set; } = null!;
         [PluginService] private static ICommandManager CommandManager { get; set; } = null!;
 
         private bool cleanedOnStartup;
         
         
-        public LogchampPlugin([RequiredVersion("1.0")] DalamudPluginInterface dalamudPluginInterface, [RequiredVersion("1.0")] IChatGui chatGui, [RequiredVersion("1.0")] ICommandManager commandManager)
+        public LogchampPlugin(IDalamudPluginInterface dalamudPluginInterface, IChatGui chatGui, ICommandManager commandManager)
         {
             this.chatGui = chatGui;
 
@@ -49,7 +49,7 @@ public class LogchampPlugin : IDalamudPlugin
                 ShowInHelp = true
             });
         }
-        private void OnChatMessage(XivChatType type, uint senderid, ref SeString sender, ref SeString message, ref bool ishandled)
+        private void OnChatMessage(XivChatType type, int senderid, ref SeString sender, ref SeString message, ref bool ishandled)
         {
             if (type == XivChatType.Notice && !cleanedOnStartup)
             {
