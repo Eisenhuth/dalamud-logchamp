@@ -9,7 +9,7 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace logchamp;
 
@@ -40,6 +40,7 @@ public class LogchampPlugin : IDalamudPlugin
             
             dalamudPluginInterface.UiBuilder.Draw += DrawConfiguration;
             dalamudPluginInterface.UiBuilder.OpenConfigUi += OpenConfig;
+            dalamudPluginInterface.UiBuilder.OpenMainUi += OpenConfig;
             
             chatGui.ChatMessage += OnChatMessage;
             
