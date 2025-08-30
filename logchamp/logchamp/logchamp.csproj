@@ -9,8 +9,8 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <OutputPath>$(AppData)\Eisenhuth\DalamudDevPlugins\LogchampPlugin\</OutputPath>
         <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-        <AssemblyVersion>1.0.7.3</AssemblyVersion>
-        <Version>1.0.7.3</Version>
+        <AssemblyVersion>1.0.7.4</AssemblyVersion>
+        <Version>1.0.7.4</Version>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <PackageProjectUrl>https://github.com/Eisenhuth/dalamud-logchamp</PackageProjectUrl>

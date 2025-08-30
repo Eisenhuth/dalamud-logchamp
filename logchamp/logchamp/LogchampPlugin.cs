@@ -67,17 +67,25 @@ public class LogchampPlugin : IDalamudPlugin
         private async Task DeleteLogs(Configuration.Timeframe timeframe)
         {
             var logsDirectoryInfo = new DirectoryInfo(configuration.LogsDirectory);
-            
+            var deucalionDirectoryInfo = new DirectoryInfo(configuration.DeucalionDirectory);
+
             if(!logsDirectoryInfo.Exists)
             {
                 chatGui.Print($"{Name}: couldn't find directory, please check the configuration -> /logs");
                 return;
             }
             
-            var deucalionDirectoryInfo = new DirectoryInfo(configuration.DeucalionDirectory);
             var initialSize = await Task.Run(() => logsDirectoryInfo.GetTotalSize("*.log") + deucalionDirectoryInfo.GetTotalSize("*.log"));
             var filesToDelete = logsDirectoryInfo.GetFilesOlderThan(timeframe).ToList();
-            filesToDelete.AddRange(deucalionDirectoryInfo.GetFilesOlderThan(timeframe).ToList());
+            
+            if (deucalionDirectoryInfo.Exists)
+            {
+                var deucalionLogs = deucalionDirectoryInfo.GetFilesOlderThan(timeframe).ToList();
+                if (deucalionLogs.Count > 0)
+                {
+                    filesToDelete.AddRange(deucalionLogs);
+                }
+            }
             
             if (filesToDelete.Count == 0)
                 return;
