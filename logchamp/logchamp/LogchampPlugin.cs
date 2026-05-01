@@ -5,11 +5,11 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Game.Command;
 using Dalamud.Game.Text;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Chat;
 
 namespace logchamp;
 
@@ -50,9 +50,9 @@ public class LogchampPlugin : IDalamudPlugin
                 ShowInHelp = true
             });
         }
-        private void OnChatMessage(XivChatType type, int senderid, ref SeString sender, ref SeString message, ref bool ishandled)
+        private void OnChatMessage(IHandleableChatMessage message)
         {
-            if (type == XivChatType.Notice && !cleanedOnStartup)
+            if (message.LogKind == XivChatType.Notice && !cleanedOnStartup)
             {
                 Task.Run(() => DeleteLogs(configTimeframe));
                 cleanedOnStartup = true;
